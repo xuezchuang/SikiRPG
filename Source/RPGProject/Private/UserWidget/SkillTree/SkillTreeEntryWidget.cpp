@@ -19,12 +19,12 @@
 void USkillTreeEntryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	SkillActor=GetWorld()->SpawnActor<ABaseSkill>(SkillClass,FVector::ZeroVector,FRotator::ZeroRotator);
+	SkillActor = GetWorld()->SpawnActor<ABaseSkill>(SkillClass, FVector::ZeroVector, FRotator::ZeroRotator);
 	SkillActor->SetPlayerReference(SubTree->MainTree->SkillTreeComp->PlayerCharacter);
 	UpdateStageText();
 	UpdateIcon();
 	UpdateUpgradeBox();
-	PlusButton->OnClicked.AddDynamic(this,&USkillTreeEntryWidget::OnPlusButtonClicked);
+	PlusButton->OnClicked.AddDynamic(this, &USkillTreeEntryWidget::OnPlusButtonClicked);
 	MinusButton->OnClicked.AddDynamic(this, &USkillTreeEntryWidget::OnMinusButtonClicked);
 }
 
@@ -35,21 +35,25 @@ int USkillTreeEntryWidget::GetAmountOfStages()
 
 void USkillTreeEntryWidget::UpdateStageText()
 {
-	StageText->SetText(FText::Format(LOCTEXT("SkillEntryWidget","{0}/{1}"),SkillActor->GetCurrentStageIndex()+1,FText::AsNumber(GetAmountOfStages())));
+	StageText->SetText(FText::Format(LOCTEXT("SkillEntryWidget", "{0}/{1}"), SkillActor->GetCurrentStageIndex() + 1, FText::AsNumber(GetAmountOfStages())));
 }
 
 void USkillTreeEntryWidget::UpdateIcon()
 {
 	UTexture2D* TempTexture;
 
-	if (SkillActor->GetCurrentStageIndex() < 0) {
+	if (SkillActor->GetCurrentStageIndex() < 0)
+	{
 		TempTexture = SkillActor->GetSkillInfo().Icon;
 	}
-	else {
-		if (SkillActor->GetCurrentStage().OverrideIcon) {
+	else
+	{
+		if (SkillActor->GetCurrentStage().OverrideIcon)
+		{
 			TempTexture = SkillActor->GetCurrentStage().OverrideIcon;
 		}
-		else {
+		else
+		{
 			TempTexture = SkillActor->GetSkillInfo().Icon;
 		}
 	}
@@ -58,29 +62,36 @@ void USkillTreeEntryWidget::UpdateIcon()
 
 void USkillTreeEntryWidget::UpdateUpgradeBox()
 {
-	if (SubTree->MainTree->SkillTreeComp->BCanUpgradeSpell(SkillActor)) {
+	if (SubTree->MainTree->SkillTreeComp->BCanUpgradeSpell(SkillActor))
+	{
 		PlusButton->SetVisibility(ESlateVisibility::Visible);
 		MinusButton->SetVisibility(ESlateVisibility::Hidden);
 		UpgradeBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		if (SkillActor->GetCurrentStageIndex() >= 1) {
+		if (SkillActor->GetCurrentStageIndex() >= 1)
+		{
 			MinusButton->SetVisibility(ESlateVisibility::Visible);
-			
+
 		}
 		SetColorAndOpacity(FLinearColor::White);
 	}
-	else {
+	else
+	{
 		PlusButton->SetVisibility(ESlateVisibility::Hidden);
-		if (SkillActor->GetCurrentStageIndex() >= 1) {
+		if (SkillActor->GetCurrentStageIndex() >= 1)
+		{
 			MinusButton->SetVisibility(ESlateVisibility::Visible);
 			UpgradeBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 			SetColorAndOpacity(FLinearColor::White);
 		}
-		else {
-			if (SubTree->MainTree->SkillTreeComp->BPlayerLearnedSpell(SkillClass)) {
+		else
+		{
+			if (SubTree->MainTree->SkillTreeComp->BPlayerLearnedSpell(SkillClass))
+			{
 				SetColorAndOpacity(FLinearColor::White);
 				UpgradeBox->SetVisibility(ESlateVisibility::Hidden);
 			}
-			else {
+			else
+			{
 				SetColorAndOpacity(FLinearColor(1, 1, 1, 0.3f));
 				UpgradeBox->SetVisibility(ESlateVisibility::Hidden);
 			}
@@ -108,12 +119,14 @@ FReply USkillTreeEntryWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-		if (bSpellLearnt) {
-			return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::RightMouseButton).NativeReply;
-		}
-		else {
-			return FReply::Handled();
-		}
+	if (bSpellLearnt)
+	{
+		return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::RightMouseButton).NativeReply;
+	}
+	else
+	{
+		return FReply::Handled();
+	}
 
 }
 
@@ -124,10 +137,12 @@ void USkillTreeEntryWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 	{
 		USkillDrag* SkillDrag = CreateWidget<USkillDrag>(GetWorld(), LoadClass<USkillDrag>(GetWorld(), TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/WBP_SkillDrag.WBP_SkillDrag_C'")));
 
-		if (SkillActor->GetCurrentStage().OverrideIcon) {
+		if (SkillActor->GetCurrentStage().OverrideIcon)
+		{
 			SkillDrag->SetSkillTexture(SkillActor->GetCurrentStage().OverrideIcon);
 		}
-		else {
+		else
+		{
 			SkillDrag->SetSkillTexture(SkillActor->GetSkillInfo().Icon);
 		}
 
@@ -135,7 +150,8 @@ void USkillTreeEntryWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 		TempOp->DefaultDragVisual = SkillDrag;
 		OutOperation = TempOp;
 
-		if (Cast<USkillDragOperation>(OutOperation)) {
+		if (Cast<USkillDragOperation>(OutOperation))
+		{
 			Cast<USkillDragOperation>(OutOperation)->SkillActor = SkillActor;
 			Cast<USkillDragOperation>(OutOperation)->FromHotkey = nullptr;
 		}

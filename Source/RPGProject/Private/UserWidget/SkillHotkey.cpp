@@ -13,13 +13,14 @@
 
 bool USkillHotkey::Initialize()
 {
-	if (!Super::Initialize()) {
+	if (!Super::Initialize())
+	{
 		return false;
 	}
-	SkillButton->OnClicked.AddDynamic(this,&USkillHotkey::OnSkillButtonClicked);
+	SkillButton->OnClicked.AddDynamic(this, &USkillHotkey::OnSkillButtonClicked);
 	CooldownMat = CooldownImage->GetDynamicMaterial();
-	DragOverColor = FLinearColor(1.0f,0.82f,0.0f,0.5f);
-	DefaultColor = FLinearColor(0,0,0,0.2f);
+	DragOverColor = FLinearColor(1.0f, 0.82f, 0.0f, 0.5f);
+	DefaultColor = FLinearColor(0, 0, 0, 0.2f);
 	return true;
 }
 
@@ -36,17 +37,21 @@ void USkillHotkey::ResetStyle()
 
 FReply USkillHotkey::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	Super::NativeOnMouseButtonDown(InGeometry,InMouseEvent);
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-	if (AssignedSpell) {
-		if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton) && !AssignedSpell->GetBOnCooldown()) {
+	if (AssignedSpell)
+	{
+		if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton) && !AssignedSpell->GetBOnCooldown())
+		{
 			return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::RightMouseButton).NativeReply;
 		}
-		else {
+		else
+		{
 			return FReply::Handled();
 		}
 	}
-	else {
+	else
+	{
 		return FReply::Handled();
 	}
 }
@@ -55,20 +60,23 @@ void USkillHotkey::NativeOnDragDetected(const FGeometry& InGeometry, const FPoin
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
-	USkillDrag* SkillDrag= CreateWidget<USkillDrag>(GetWorld(), LoadClass<USkillDrag>(GetWorld(), TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/WBP_SkillDrag.WBP_SkillDrag_C'")));
+	USkillDrag* SkillDrag = CreateWidget<USkillDrag>(GetWorld(), LoadClass<USkillDrag>(GetWorld(), TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/WBP_SkillDrag.WBP_SkillDrag_C'")));
 
-	if (AssignedSpell->GetCurrentStage().OverrideIcon) {
+	if (AssignedSpell->GetCurrentStage().OverrideIcon)
+	{
 		SkillDrag->SetSkillTexture(AssignedSpell->GetCurrentStage().OverrideIcon);
 	}
-	else {
+	else
+	{
 		SkillDrag->SetSkillTexture(AssignedSpell->GetSkillInfo().Icon);
 	}
 
-	UDragDropOperation* TempOp= UWidgetBlueprintLibrary::CreateDragDropOperation(SkillDragOperation);
+	UDragDropOperation* TempOp = UWidgetBlueprintLibrary::CreateDragDropOperation(SkillDragOperation);
 	TempOp->DefaultDragVisual = SkillDrag;
 	OutOperation = TempOp;
 
-	if (Cast<USkillDragOperation>(OutOperation)) {
+	if (Cast<USkillDragOperation>(OutOperation))
+	{
 		Cast<USkillDragOperation>(OutOperation)->SkillActor = AssignedSpell;
 		Cast<USkillDragOperation>(OutOperation)->FromHotkey = this;
 	}
@@ -77,32 +85,38 @@ void USkillHotkey::NativeOnDragDetected(const FGeometry& InGeometry, const FPoin
 bool USkillHotkey::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	//是被放上去拖拽物的时候
-	Super::NativeOnDragOver(InGeometry,InDragDropEvent,InOperation);
+	Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
 
 	//InOperation是之前从别的地方拽出来的OutOperation
-	if (Cast<USkillDragOperation>(InOperation)) {
-		if (!bDraggedOver&&Cast<USkillDragOperation>(InOperation)->FromHotkey != this&&AssignedSpell == nullptr) {
+	if (Cast<USkillDragOperation>(InOperation))
+	{
+		if (!bDraggedOver && Cast<USkillDragOperation>(InOperation)->FromHotkey != this && AssignedSpell == nullptr)
+		{
 			Base->SetColorAndOpacity(DragOverColor);
 			bDraggedOver = true;
 			return true;
 		}
-		else {
+		else
+		{
 			return false;
 		}
 	}
-	else {
+	else
+	{
 		return false;
 	}
 }
 
 void USkillHotkey::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	Super::NativeOnDragLeave(InDragDropEvent,InOperation);
+	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
 
-	if (bDraggedOver) {
+	if (bDraggedOver)
+	{
 		//因为OnLeave函数并不仅仅是在拖拽到另外一个插槽上又离开的时候调用的，
 		//所以需要排除一下从当前插槽离开的情况
-		if (Cast<USkillDragOperation>(InOperation)) {
+		if (Cast<USkillDragOperation>(InOperation))
+		{
 			ResetStyle();
 		}
 	}
@@ -110,15 +124,20 @@ void USkillHotkey::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDra
 
 bool USkillHotkey::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	Super::NativeOnDrop(InGeometry,InDragDropEvent,InOperation);
+	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 
-	if (Cast<USkillDragOperation>(InOperation)) {
-		if (Cast<USkillDragOperation>(InOperation)->FromHotkey != this) {
-			if (AssignedSpell) {
-				if (AssignedSpell->GetBOnCooldown()) {
+	if (Cast<USkillDragOperation>(InOperation))
+	{
+		if (Cast<USkillDragOperation>(InOperation)->FromHotkey != this)
+		{
+			if (AssignedSpell)
+			{
+				if (AssignedSpell->GetBOnCooldown())
+				{
 					return true;
 				}
-				else {
+				else
+				{
 					ABaseSkill* LocalAssignedSpell = AssignedSpell;
 					ClearAssignedSpell();
 					if (Cast<USkillDragOperation>(InOperation)->FromHotkey)
@@ -127,21 +146,24 @@ bool USkillHotkey::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 						AssignSpell(Cast< USkillDragOperation>(InOperation)->SkillActor);
 						Cast<USkillDragOperation>(InOperation)->FromHotkey->AssignSpell(LocalAssignedSpell);
 					}
-					else {
+					else
+					{
 						AssignSpell(Cast< USkillDragOperation>(InOperation)->SkillActor);
 					}
 					ResetStyle();
 					return true;
 				}
 			}
-			else {
-				if(Cast<USkillDragOperation>(InOperation)->FromHotkey)
-				Cast<USkillDragOperation>(InOperation)->FromHotkey->ClearAssignedSpell();
+			else
+			{
+				if (Cast<USkillDragOperation>(InOperation)->FromHotkey)
+					Cast<USkillDragOperation>(InOperation)->FromHotkey->ClearAssignedSpell();
 				AssignSpell(Cast<USkillDragOperation>(InOperation)->SkillActor);
 				return true;
 			}
 		}
-		else {
+		else
+		{
 			return false;
 		}
 	}
@@ -163,10 +185,12 @@ void USkillHotkey::AssignSpell(ABaseSkill* NewAssigneSpell)
 	this->AssignedSpell = NewAssigneSpell;
 	AssignedSpell->SetHotkey(this);
 	SkillButton->SetIsEnabled(true);
-	if (AssignedSpell->GetCurrentStage().OverrideIcon) {
+	if (AssignedSpell->GetCurrentStage().OverrideIcon)
+	{
 		SkillIcon->SetBrushFromTexture(AssignedSpell->GetCurrentStage().OverrideIcon);
 	}
-	else {
+	else
+	{
 		SkillIcon->SetBrushFromTexture(AssignedSpell->GetSkillInfo().Icon);
 	}
 	SkillIcon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -174,11 +198,12 @@ void USkillHotkey::AssignSpell(ABaseSkill* NewAssigneSpell)
 
 void USkillHotkey::ClearAssignedSpell()
 {
-	if (AssignedSpell) {
+	if (AssignedSpell)
+	{
 		AssignedSpell->SetHotkey(nullptr);
 		AssignedSpell = nullptr;
 
-		SkillButton -> SetIsEnabled(false);
+		SkillButton->SetIsEnabled(false);
 		SkillIcon->SetBrushFromTexture(nullptr);
 		SkillIcon->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -187,7 +212,8 @@ void USkillHotkey::ClearAssignedSpell()
 void USkillHotkey::EnableHotkey()
 {
 	bDeactived = false;
-	if (!AssignedSpell->GetBOnCooldown()) {
+	if (!AssignedSpell->GetBOnCooldown())
+	{
 		SkillButton->SetIsEnabled(true);
 		SkillIcon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		CooldownImage->SetVisibility(ESlateVisibility::Hidden);
@@ -198,7 +224,8 @@ void USkillHotkey::EnableHotkey()
 void USkillHotkey::DisableHotkey()
 {
 	bDeactived = true;
-	if (!AssignedSpell->GetBOnCooldown()) {
+	if (!AssignedSpell->GetBOnCooldown())
+	{
 		SkillButton->SetIsEnabled(false);
 		SkillIcon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		CooldownImage->SetVisibility(ESlateVisibility::Visible);

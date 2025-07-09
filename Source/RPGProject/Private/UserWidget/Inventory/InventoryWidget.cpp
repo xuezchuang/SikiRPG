@@ -18,8 +18,9 @@ void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	CloseButton->OnClicked.AddDynamic(this,&UInventoryWidget::OnCloseButtonClicked);
-	SortButton->OnClicked.AddDynamic(this,&UInventoryWidget::OnSortButtonClicked);
-	for (ESortType Type : UStaticLibrary::EnumGetList<ESortType>("ESortType")) {
+	SortButton->OnClicked.AddDynamic(this, &UInventoryWidget::OnSortButtonClicked);
+	for (ESortType Type : UStaticLibrary::EnumGetList<ESortType>())
+	{
 		SortCategoryBox->AddOption(UStaticLibrary::GetEnumValueAsString<ESortType>("ESortType", Type));
 	}
 	SortCategoryBox->SetSelectedOption(SortCategoryBox->GetOptionAtIndex(0));

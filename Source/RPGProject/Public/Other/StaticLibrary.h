@@ -9,7 +9,7 @@
 class ABaseElement;
 
 /**
- * 
+ *
  */
 UCLASS()
 class RPGPROJECT_API UStaticLibrary : public UObject
@@ -17,41 +17,50 @@ class RPGPROJECT_API UStaticLibrary : public UObject
 	GENERATED_BODY()
 
 public:
-		static float CaculateFinalDamage(float BaseDamage,int CritChance,TSubclassOf<ABaseElement> AttackerElement,TSubclassOf<ABaseElement> DefenderElement);
-		static bool BIsEnemy(AActor* Actor);
+	static float CaculateFinalDamage(float BaseDamage, int CritChance, TSubclassOf<ABaseElement> AttackerElement, TSubclassOf<ABaseElement> DefenderElement);
+	static bool BIsEnemy(AActor* Actor);
 
-		template<typename TEnum>
-		static FORCEINLINE FString GetEnumValueAsString(const FString& Name, TEnum Value);
-		
-		template<typename TEnum>
-		static FORCEINLINE TArray<TEnum> EnumGetList(const FString& Name);
+	template<typename TEnum>
+	static FString GetEnumValueAsString(const FString& Name, TEnum Value);
+
+	template<typename TEnum>
+	static TArray<TEnum> EnumGetList();
 };
 
 template<typename TEnum>
-FORCEINLINE FString UStaticLibrary::GetEnumValueAsString(const FString& Name, TEnum Value)
+FString UStaticLibrary::GetEnumValueAsString(const FString& Name, TEnum Value)
 {
 	//const UEnum* EnumPtr= FindObject<UEnum>(ANY_PACKAGE, *Name, true);
 	const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *Name);
-	if (!EnumPtr) {
+	if (!EnumPtr)
+	{
 		return FString("InValid");
 	}
-	else {
+	else
+	{
 		FString TempString = EnumPtr->GetNameByValue((int64)Value).ToString();
-		TempString.RemoveFromStart(Name+"::");
+		TempString.RemoveFromStart(Name + "::");
 		return TempString;
 	}
 }
 
 template<typename TEnum>
-FORCEINLINE TArray<TEnum>
-UStaticLibrary::EnumGetList(const FString& Name)
+TArray<TEnum> UStaticLibrary::EnumGetList()
 {
 	TArray<TEnum> Result;
-	//UEnum* pEnum= FindObject<UEnum>(ANY_PACKAGE, *Name, true);
-	const UEnum* pEnum = FindObject<UEnum>(nullptr, *Name);
-	for (int i = 0; i < pEnum->GetMaxEnumValue();i++) {
-		if (pEnum->IsValidEnumValue(i)) {
-			Result.Add(static_cast<TEnum>(i));
+	const UEnum* pEnum = StaticEnum<TEnum>();
+	if (!pEnum)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnumGetList: StaticEnum returned nullptr"));
+		return Result;
+	}
+
+	for (int32 i = 0; i < pEnum->NumEnums(); ++i)
+	{
+		// 防止包含 _MAX 结尾的无效项
+		if (!pEnum->HasMetaData(TEXT("Hidden"), i))
+		{
+			Result.Add(static_cast<TEnum>(pEnum->GetValueByIndex(i)));
 		}
 	}
 	return Result;

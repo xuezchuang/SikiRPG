@@ -17,7 +17,7 @@ class RPGPROJECT_API USkillTreeEntryWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-	UPROPERTY(Meta=(BindWidget))
+	UPROPERTY(Meta = (BindWidget))
 	class UOverlay* SkillOverlay;
 	UPROPERTY(Meta = (BindWidget))
 	UImage* SkillIcon;
@@ -49,10 +49,10 @@ public:
 	void OnSpellLearnt();
 
 	UFUNCTION()
-		void OnPlusButtonClicked();
+	void OnPlusButtonClicked();
 
 	UFUNCTION()
-		void OnMinusButtonClicked();
+	void OnMinusButtonClicked();
 	//只有当鼠标右键按下的时候，才来执行检测拖拽的方法
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	//当检测到拖拽的时候调用的函数

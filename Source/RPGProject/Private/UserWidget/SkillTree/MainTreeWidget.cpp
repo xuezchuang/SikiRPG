@@ -14,19 +14,22 @@
 void UMainTreeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	CloseButton->OnClicked.AddDynamic(this,&UMainTreeWidget::OnCloseButtonClicked);
+	CloseButton->OnClicked.AddDynamic(this, &UMainTreeWidget::OnCloseButtonClicked);
 }
 
 void UMainTreeWidget::OnCategoryClicked(int Index)
 {
-	if (CurrentlySelectedIndex != Index) {
-		if (CurrentlySelectedIndex == -1) {
+	if (CurrentlySelectedIndex != Index)
+	{
+		if (CurrentlySelectedIndex == -1)
+		{
 			SubTreeSwitcher->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 			CurrentlySelectedIndex = Index;
 			CategoryWidgets[CurrentlySelectedIndex]->ChangeState(true);
 			SubTreeSwitcher->SetActiveWidgetIndex(CurrentlySelectedIndex);
 		}
-		else {
+		else
+		{
 			CategoryWidgets[CurrentlySelectedIndex]->ChangeState(false);
 			CurrentlySelectedIndex = Index;
 			CategoryWidgets[CurrentlySelectedIndex]->ChangeState(true);
@@ -58,7 +61,8 @@ void UMainTreeWidget::GenerateCategories()
 	CategoryWidgets.Empty();
 	SubTreeWidgets.Empty();
 
-	for (int i = 0; i < TreeCategories.Num(); i++) {
+	for (int i = 0; i < TreeCategories.Num(); i++)
+	{
 		UCategoryWidget* CategoryWidget = CreateWidget<UCategoryWidget>(GetWorld(), LoadClass<UCategoryWidget>(GetWorld(), TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/SkillTree/WBP_Category.WBP_Category_C'")));
 		CategoryWidget->CategoryName = TreeCategories[i].Name;
 		CategoryWidget->Index = i;
@@ -67,7 +71,7 @@ void UMainTreeWidget::GenerateCategories()
 
 		CategoriesBox->AddChild(CategoryWidget);
 
-		USubTreeWidget* SubTreeWidget= CreateWidget<USubTreeWidget>(GetWorld(), LoadClass<USubTreeWidget>(GetWorld(), TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/SkillTree/WBP_SubTree.WBP_SubTree_C'")));
+		USubTreeWidget* SubTreeWidget = CreateWidget<USubTreeWidget>(GetWorld(), LoadClass<USubTreeWidget>(GetWorld(), TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/SkillTree/WBP_SubTree.WBP_SubTree_C'")));
 		SubTreeWidget->Content = TreeCategories[i].Content;
 		SubTreeWidget->MainTree = this;
 		SubTreeWidgets.Add(SubTreeWidget);

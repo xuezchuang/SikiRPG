@@ -17,7 +17,7 @@ class RPGPROJECT_API UMainTreeWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(Meta=(BindWidget))
+	UPROPERTY(Meta = (BindWidget))
 	UTextBlock* SpText;
 	UPROPERTY(Meta = (BindWidget))
 	UTextBlock* LevelText;
@@ -39,7 +39,7 @@ public:
 	void OnCategoryClicked(int Index);
 
 	UFUNCTION()
-		void OnCloseButtonClicked();
+	void OnCloseButtonClicked();
 
 	void UpdateLevel();
 
@@ -48,5 +48,5 @@ public:
 	void GenerateCategories();
 
 	void Initialze(class USkillTreeComponent* AssignedTreeComp);
-	
+
 };
