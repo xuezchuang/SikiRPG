@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Quest/QuestEnum.h"
 #include "QuestListEntry.generated.h"
 
 class UTextBlock;

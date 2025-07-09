@@ -152,7 +152,7 @@ void UQuestJournal::AddQuestEntry(class ABaseQuest* Quest)
 	}
 }
 
-void UQuestJournal::Initialize(class AQuestManager* QuestManagerRef)
+void UQuestJournal::InitializeWithManager(class AQuestManager* QuestManagerRef)
 {
 	this->QuestManager = QuestManagerRef;
 	PlayerCharacter = QuestManagerRef->PlayerCharacter;

@@ -30,7 +30,8 @@ public:
 template<typename TEnum>
 FORCEINLINE FString UStaticLibrary::GetEnumValueAsString(const FString& Name, TEnum Value)
 {
-	const UEnum* EnumPtr= FindObject<UEnum>(ANY_PACKAGE, *Name, true);
+	//const UEnum* EnumPtr= FindObject<UEnum>(ANY_PACKAGE, *Name, true);
+	const UEnum* EnumPtr = FindObject<UEnum>(nullptr, *Name);
 	if (!EnumPtr) {
 		return FString("InValid");
 	}
@@ -46,7 +47,8 @@ FORCEINLINE TArray<TEnum>
 UStaticLibrary::EnumGetList(const FString& Name)
 {
 	TArray<TEnum> Result;
-	UEnum* pEnum= FindObject<UEnum>(ANY_PACKAGE, *Name, true);
+	//UEnum* pEnum= FindObject<UEnum>(ANY_PACKAGE, *Name, true);
+	const UEnum* pEnum = FindObject<UEnum>(nullptr, *Name);
 	for (int i = 0; i < pEnum->GetMaxEnumValue();i++) {
 		if (pEnum->IsValidEnumValue(i)) {
 			Result.Add(static_cast<TEnum>(i));

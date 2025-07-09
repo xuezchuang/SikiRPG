@@ -15,17 +15,22 @@ void ASkillNova::OnSkillNotify()
 
 	TArray<FHitResult> HitResults;
 
-	FCollisionShape CollisonSphere= FCollisionShape::MakeSphere(GetCurrentStage().Range);
+	FCollisionShape CollisonSphere = FCollisionShape::MakeSphere(GetCurrentStage().Range);
 
-	if (GetWorld()->SweepMultiByChannel(HitResults, PlayerReference->GetActorLocation(), PlayerReference->GetActorLocation(), FQuat::Identity, ECC_Visibility, CollisonSphere)) {
+	if (GetWorld()->SweepMultiByChannel(HitResults, PlayerReference->GetActorLocation(), PlayerReference->GetActorLocation(), FQuat::Identity, ECC_Visibility, CollisonSphere))
+	{
 		//UKismetSystemLibrary::DrawDebugSphere(this, PlayerReference->GetActorLocation(), GetCurrentStage().Range,12,FLinearColor::Red, 3.0f,2);
-		for (auto HitResult : HitResults) {
-			if (HitResult.GetActor()) {
-				ANormalEnemy* Enemy= Cast<ANormalEnemy>(HitResult.GetActor());
-				if (Enemy) {
-					UE_LOG(LogTemp,Warning,TEXT("HitEnemy"));
-					IDamageableInterface* DamagebaleInterface= Cast<IDamageableInterface>(Enemy);
-					if (DamagebaleInterface) {
+		for (auto HitResult : HitResults)
+		{
+			if (HitResult.GetActor())
+			{
+				ANormalEnemy* Enemy = Cast<ANormalEnemy>(HitResult.GetActor());
+				if (Enemy)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("HitEnemy"));
+					IDamageableInterface* DamagebaleInterface = Cast<IDamageableInterface>(Enemy);
+					if (DamagebaleInterface)
+					{
 						DamagebaleInterface->OnReceiveDamage(GetCurrentStage().Damage, GetCurrentStage().DamageType, GetSkillInfo().Element, GetCurrentStage().CriticalChance, PlayerReference, this);
 					}
 				}

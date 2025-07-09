@@ -78,7 +78,7 @@ public:
 
 	void AddQuestEntry(class ABaseQuest* Quest);
 
-	void Initialize(class AQuestManager* QuestManager);
+	void InitializeWithManager(class AQuestManager* QuestManager);
 
 	void OnQuestClicked(class UQuestListEntry* ClickedQuestListEntry);
 

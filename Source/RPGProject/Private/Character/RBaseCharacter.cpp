@@ -152,7 +152,7 @@ void ARBaseCharacter::BeginPlay()
 	QuestManager->PlayerCharacter = this;
 	QuestManager->MainUserWidget = MainUserWidget;
 	//UE_LOG(LogTemp,Warning,TEXT("%s"),*UStaticLibrary::GetEnumValueAsString<ERegions>("ERegions",ERegions::Grass));
-	MainUserWidget->QuestJournal->Initialize(QuestManager);
+	MainUserWidget->QuestJournal->InitializeWithManager(QuestManager);
 
 	MainUserWidget->InventoryWidget->ActionMenu->InventoryRef = InventoryRef;
 	MainUserWidget->ThrowWidget->InventoryRef = InventoryRef;
