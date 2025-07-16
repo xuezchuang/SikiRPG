@@ -14,17 +14,17 @@ class RPGPROJECT_API AMerchant : public ABaseNPC
 {
 	GENERATED_BODY()
 
-		class ARBaseCharacter* PlayerCharacter;
+	class ARBaseCharacter* PlayerCharacter;
 
-	 class UShopWidget* ShopWidget;
+	class UShopWidget* ShopWidget;
 
-		virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
-		virtual void OnIteractWith(class ARBaseCharacter* Character) override;
+	virtual void OnIteractWith(class ARBaseCharacter* Character) override;
 
-		virtual void OnLeavePlayerRadius(class ARBaseCharacter* Character) override;
+	virtual void OnLeavePlayerRadius(class ARBaseCharacter* Character) override;
 public:
 	bool bShopOpen;
-	UPROPERTY(EditAnywhere,Category=Item)
+	UPROPERTY(EditAnywhere, Category = Item)
 	TArray<TSubclassOf<class ABaseItem>> OfferedItems;
 };

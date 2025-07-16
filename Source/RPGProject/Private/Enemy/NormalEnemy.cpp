@@ -60,8 +60,8 @@ ANormalEnemy::ANormalEnemy()
 	EnemyWidgetComp->SetVisibility(false);
 
 	EnemyWidgetComp->SetupAttachment(RootComponent);
-	EnemyWidgetComp->SetRelativeLocation(FVector(0, 0, 100));
-
+	//EnemyWidgetComp->SetRelativeLocation(FVector(0, 0, 100));
+	EnemyWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 
 	ShowUICollision = CreateDefaultSubobject<USphereComponent>(TEXT("ShowUICollison"));
 	ShowUICollision->SetupAttachment(RootComponent);
@@ -99,7 +99,7 @@ void ANormalEnemy::OnSightPerceptionUpdate(const TArray<AActor*>& UpdatedActors)
 			}
 }
 
-void ANormalEnemy::NotifyHit()
+void ANormalEnemy::OnNotifyHit()
 {
 	AttackRay();
 }

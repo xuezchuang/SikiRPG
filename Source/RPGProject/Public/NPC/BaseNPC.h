@@ -8,7 +8,7 @@
 #include "BaseNPC.generated.h"
 
 UCLASS()
-class RPGPROJECT_API ABaseNPC : public ACharacter,public IInterationInterface
+class RPGPROJECT_API ABaseNPC : public ACharacter, public IInterationInterface
 {
 	GENERATED_BODY()
 
@@ -28,22 +28,22 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UPaperSpriteComponent* QuestIcon;
 
-	UPROPERTY(EditAnywhere,Category=Quest)
+	UPROPERTY(EditAnywhere, Category = Quest)
 	FText Name;
 	UPROPERTY(EditAnywhere, Category = Quest)
 	TSubclassOf<class ABaseQuest> MyQuest;
 
 	UPROPERTY(EditAnywhere, Category = Quest)
-		class UMessageWidget* MessageWidget;
+	class UMessageWidget* MessageWidget;
 
 	UPROPERTY(VisibleAnywhere, Category = Quest)
-		bool bInPlayerRadius;
+	bool bInPlayerRadius;
 
 	FTimerHandle TimerHandle_ResetMessage;
 
 	void ResetMessage();
-public:	
-	UPROPERTY(EditAnywhere,Category=Quest)
+public:
+	UPROPERTY(EditAnywhere, Category = Quest)
 	bool bHasQuest;
 
 	UPROPERTY(EditAnywhere, Category = Quest)
@@ -53,7 +53,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Quest)
 	FText Message;
 	UPROPERTY(EditAnywhere, Category = Quest)
-	float DefaultDuration=5.0f;
+	float DefaultDuration = 5.0f;
 
 
 	// Called every frame
@@ -65,9 +65,9 @@ public:
 	virtual void OnEnterPlayerRadius(class ARBaseCharacter* Character) override;
 	virtual void OnLeavePlayerRadius(class ARBaseCharacter* Character) override;
 	virtual void OnIteractWith(class ARBaseCharacter* Character) override;
-	
+
 
 	void OnTalkWith(class ARBaseCharacter* Character);
 
-	void ShowMessage(FText MessageRef,float Duration,class ARBaseCharacter* Character);
+	void ShowMessage(FText MessageRef, float Duration, class ARBaseCharacter* Character);
 };

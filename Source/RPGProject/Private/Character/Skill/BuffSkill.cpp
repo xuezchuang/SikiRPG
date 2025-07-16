@@ -25,12 +25,12 @@ void ABuffSkill::ResetBuff()
 
 void ABuffSkill::OnActive()
 {
-	 BuffWidgetRef=PlayerReference->AddBuff(this);
-	 BuffDuration = GetCurrentStage().CastingTime;
-	 BuffWidgetRef->CooldownImage->SetVisibility(ESlateVisibility::Visible);
-	 BuffWidgetRef->CooldownTime->SetVisibility(ESlateVisibility::Visible);
-	 RemainingTime = BuffDuration;
-	 GetWorldTimerManager().SetTimer(TimerHandle_UpdateEffect,this,&ABuffSkill::OnUpdateBuff,0.01,true);
+	BuffWidgetRef = PlayerReference->AddBuff(this);
+	BuffDuration = GetCurrentStage().CastingTime;
+	BuffWidgetRef->CooldownImage->SetVisibility(ESlateVisibility::Visible);
+	BuffWidgetRef->CooldownTime->SetVisibility(ESlateVisibility::Visible);
+	RemainingTime = BuffDuration;
+	GetWorldTimerManager().SetTimer(TimerHandle_UpdateEffect, this, &ABuffSkill::OnUpdateBuff, 0.01, true);
 }
 
 void ABuffSkill::OnDeActive()
@@ -42,26 +42,30 @@ void ABuffSkill::OnDeActive()
 
 void ABuffSkill::OnUpdateBuff()
 {
-	if (RemainingTime <= 0) {
+	if (RemainingTime <= 0)
+	{
 		GetWorldTimerManager().ClearTimer(TimerHandle_UpdateEffect);
 		OnDeActive();
 	}
-	else {
+	else
+	{
 		ApplyEffect();
-		RemainingTime-=0.01f;
+		RemainingTime -= 0.01f;
 		BuffWidgetRef->CooldownTime->SetText(FText::AsNumber(FMath::RoundHalfToZero(RemainingTime)));
 		BuffWidgetRef->CooldownMat->SetScalarParameterValue("Percent", RemainingTime / BuffDuration);
 	}
-	
+
 }
 
 void ABuffSkill::OnSkillNotify()
 {
 	Super::OnSkillNotify();
-	if (PlayerReference->Buffs.Contains(this)) {
+	if (PlayerReference->Buffs.Contains(this))
+	{
 		ResetBuff();
 	}
-	else {
+	else
+	{
 		OnActive();
 	}
 }

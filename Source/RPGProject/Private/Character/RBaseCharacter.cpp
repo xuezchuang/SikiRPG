@@ -48,9 +48,9 @@
 // Sets default values
 ARBaseCharacter::ARBaseCharacter()
 {
-	CameraBoom=CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-		FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom);
 
 	OverloadParticleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("OverloadParticleComp"));
@@ -71,7 +71,7 @@ ARBaseCharacter::ARBaseCharacter()
 
 	NeededExpToNextLevel = FMath::FloorToInt((FMath::Pow((CurrentLevel - 1), 3.0) + 60) / 5 * ((CurrentLevel - 1) * 2 + 60) + 60);
 	PortraitComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("PortraitComponent"));
-	PortraitComponent->SetupAttachment(GetMesh(),"head");
+	PortraitComponent->SetupAttachment(GetMesh(), "head");
 	PortraitComponent->SetRelativeLocation(FVector(0, 25, 0));
 	PortraitComponent->SetRelativeRotation(FRotator(0, -90, 90));
 
@@ -111,7 +111,7 @@ ARBaseCharacter::ARBaseCharacter()
 void ARBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	PC =Cast<APlayerController>( GetController());
+	PC = Cast<APlayerController>(GetController());
 	PC->bShowMouseCursor = true;
 
 	MainUserWidget = CreateWidget<UMainUserWidget>(GetWorld(), LoadClass<UMainUserWidget>(this, TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/WBP_Main.WBP_Main_C'")));
@@ -121,7 +121,8 @@ void ARBaseCharacter::BeginPlay()
 	{
 		ReadData();
 	}
-	else {
+	else
+	{
 		LoadGame();
 		MainUserWidget->SetHPProgressBar(CurrentHp / TotalHp);
 		MainUserWidget->SetMPProgressBar(CurrentMp / TotalMp);
@@ -148,7 +149,7 @@ void ARBaseCharacter::BeginPlay()
 	//GenerateStartingSkills();
 	SkillTreeComp->SetupTree();
 
-	QuestManager=GetWorld()->SpawnActor<AQuestManager>(QuestManagetClass,Params);
+	QuestManager = GetWorld()->SpawnActor<AQuestManager>(QuestManagetClass, Params);
 	QuestManager->PlayerCharacter = this;
 	QuestManager->MainUserWidget = MainUserWidget;
 	//UE_LOG(LogTemp,Warning,TEXT("%s"),*UStaticLibrary::GetEnumValueAsString<ERegions>("ERegions",ERegions::Grass));
@@ -158,7 +159,7 @@ void ARBaseCharacter::BeginPlay()
 	MainUserWidget->ThrowWidget->InventoryRef = InventoryRef;
 	DefaultSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	InventoryRef->UpdateWeight();
-	MainUserWidget->CraftingMenu->InitCraftingMenu(InventoryRef); 
+	MainUserWidget->CraftingMenu->InitCraftingMenu(InventoryRef);
 
 	MainUserWidget->StorageWidget->PlayerInventory = InventoryRef;
 
@@ -168,11 +169,12 @@ void ARBaseCharacter::BeginPlay()
 void ARBaseCharacter::MoveForward(float Value)
 {
 
-	if (Value != 0&&Controller)
+	if (Value != 0 && Controller)
 	{
 		CancleMissile();
 
-		if (bHasMouseMoveCommand) {
+		if (bHasMouseMoveCommand)
+		{
 			CancleMoveToCursor();
 		}
 
@@ -191,7 +193,8 @@ void ARBaseCharacter::MoveRight(float Value)
 	{
 		CancleMissile();
 
-		if (bHasMouseMoveCommand) {
+		if (bHasMouseMoveCommand)
+		{
 			CancleMoveToCursor();
 		}
 
@@ -202,7 +205,7 @@ void ARBaseCharacter::MoveRight(float Value)
 		AddMovementInput(Direction, Value);
 		QuestManager->OnPlayerMove();
 	}
-	
+
 }
 
 
@@ -216,8 +219,9 @@ void ARBaseCharacter::OnSetDestinationPressed()
 
 void ARBaseCharacter::SetNewMoveDestination(const FVector DesLocaiton)
 {
-	float const Distance= FVector::Dist(DesLocaiton, GetActorLocation());
-	if (Distance > 120.0f) {
+	float const Distance = FVector::Dist(DesLocaiton, GetActorLocation());
+	if (Distance > 120.0f)
+	{
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(PC, DesLocaiton);
 		QuestManager->OnPlayerMove();
 	}
@@ -229,43 +233,48 @@ void ARBaseCharacter::MoveToCursor()
 	PC->GetHitResultUnderCursor(CursorTraceChannel, false, Hit);
 	if (Hit.bBlockingHit)
 	{
-		 ISelectableInterface* SelectableInterface=Cast<ISelectableInterface>(Hit.GetActor());
-		 if (SelectableInterface) {
-			 //当前点击的Actor,是要被高亮显示的
-			 if (SelectedActor == Hit.GetActor()) {
-				 //两次点击的是同一个Actor
-				 SelectedActor = Hit.GetActor();
-				 if(Cast<ISelectableInterface>(SelectedActor))
-				 Cast<ISelectableInterface>(SelectedActor)->OnSelected(this);
-			 }
-			 else {
-				 //两次点击的是不同的Actor
-				 //把之前点击的Actor,取消高亮
-				 if (Cast<ISelectableInterface>(SelectedActor))
-					 Cast<ISelectableInterface>(SelectedActor)->OnSelectionEnd(this);
+		ISelectableInterface* SelectableInterface = Cast<ISelectableInterface>(Hit.GetActor());
+		if (SelectableInterface)
+		{
+			//当前点击的Actor,是要被高亮显示的
+			if (SelectedActor == Hit.GetActor())
+			{
+				//两次点击的是同一个Actor
+				SelectedActor = Hit.GetActor();
+				if (Cast<ISelectableInterface>(SelectedActor))
+					Cast<ISelectableInterface>(SelectedActor)->OnSelected(this);
+			}
+			else
+			{
+				//两次点击的是不同的Actor
+				//把之前点击的Actor,取消高亮
+				if (Cast<ISelectableInterface>(SelectedActor))
+					Cast<ISelectableInterface>(SelectedActor)->OnSelectionEnd(this);
 
-				 //当前正在点击Actor设置高亮
-				 if (Cast<ISelectableInterface>(Hit.GetActor()))
-				 {
-					 Cast<ISelectableInterface>(Hit.GetActor())->OnSelected(this);
-					 SelectedActor = Hit.GetActor();
-				 }
-			 }
-		 }
-		 else {
-			 if (SelectedActor) {
-				 //当点击地面的时候，要将之前点击的Actor，取消高亮
-				 if (Cast<ISelectableInterface>(SelectedActor))
-				 {
-					 Cast<ISelectableInterface>(SelectedActor)->OnSelectionEnd(this);
-					 SelectedActor = nullptr;
-				 }
-			 }
-			 FActorSpawnParameters Params;
-			 Params.Owner = this;
-			 CurrentCursor = GetWorld()->SpawnActor<ACursorDecal>(CursorDecal, Hit.Location, FRotator::ZeroRotator, Params);
-			 SetNewMoveDestination(Hit.ImpactPoint);
-		 }
+				//当前正在点击Actor设置高亮
+				if (Cast<ISelectableInterface>(Hit.GetActor()))
+				{
+					Cast<ISelectableInterface>(Hit.GetActor())->OnSelected(this);
+					SelectedActor = Hit.GetActor();
+				}
+			}
+		}
+		else
+		{
+			if (SelectedActor)
+			{
+				//当点击地面的时候，要将之前点击的Actor，取消高亮
+				if (Cast<ISelectableInterface>(SelectedActor))
+				{
+					Cast<ISelectableInterface>(SelectedActor)->OnSelectionEnd(this);
+					SelectedActor = nullptr;
+				}
+			}
+			FActorSpawnParameters Params;
+			Params.Owner = this;
+			CurrentCursor = GetWorld()->SpawnActor<ACursorDecal>(CursorDecal, Hit.Location, FRotator::ZeroRotator, Params);
+			SetNewMoveDestination(Hit.ImpactPoint);
+		}
 	}
 }
 
@@ -282,7 +291,7 @@ void ARBaseCharacter::CancleMoveToCursor()
 
 void ARBaseCharacter::CameraZoomIn()
 {
-	CameraBoom->TargetArmLength =FMath::Clamp(CameraBoom->TargetArmLength - CameraZoomAlpha,MinCameraZoom_V,MaxCameraZoom_V);
+	CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength - CameraZoomAlpha, MinCameraZoom_V, MaxCameraZoom_V);
 }
 
 void ARBaseCharacter::CameraZoomOut()
@@ -297,11 +306,13 @@ void ARBaseCharacter::ToogleShowSkillTree()
 
 void ARBaseCharacter::ToogleShowQuest()
 {
-	if (MainUserWidget->bQuestVisibling) {
+	if (MainUserWidget->bQuestVisibling)
+	{
 		MainUserWidget->QuestJournal->SetVisibility(ESlateVisibility::Hidden);
 		MainUserWidget->bQuestVisibling = false;
 	}
-	else {
+	else
+	{
 		MainUserWidget->QuestJournal->SetVisibility(ESlateVisibility::Visible);
 		MainUserWidget->bQuestVisibling = true;
 	}
@@ -309,11 +320,13 @@ void ARBaseCharacter::ToogleShowQuest()
 
 void ARBaseCharacter::ToogleShowInventory()
 {
-	if (MainUserWidget->bInventoryVisibling) {
+	if (MainUserWidget->bInventoryVisibling)
+	{
 		MainUserWidget->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 		MainUserWidget->bInventoryVisibling = false;
 	}
-	else {
+	else
+	{
 		MainUserWidget->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 		MainUserWidget->bInventoryVisibling = true;
 	}
@@ -322,12 +335,14 @@ void ARBaseCharacter::ToogleShowInventory()
 void ARBaseCharacter::InteractToNPC()
 {
 	TArray<AActor*> OverlapActors;;
-	InteractionComp->GetOverlappingActors(OverlapActors,TSubclassOf<ABaseNPC>());
+	InteractionComp->GetOverlappingActors(OverlapActors, TSubclassOf<ABaseNPC>());
 	//UE_LOG(LogTemp, Warning, TEXT("%s"),*FString::SanitizeFloat(OverlapingActors.Num()));
-	for (AActor* MyActor : OverlapActors) {
-		
+	for (AActor* MyActor : OverlapActors)
+	{
+
 		IInterationInterface* IT = Cast<IInterationInterface>(MyActor);
-		if (IT) {
+		if (IT)
+		{
 			IT->OnIteractWith(this);
 			break;
 		}
@@ -336,7 +351,7 @@ void ARBaseCharacter::InteractToNPC()
 
 void ARBaseCharacter::TestCompleteQuest()
 {
-	QuestManager->CurrentQuestActors[0]->OnSubGoalCompleted(0,true);
+	QuestManager->CurrentQuestActors[0]->OnSubGoalCompleted(0, true);
 }
 
 void ARBaseCharacter::TestFailQuest()
@@ -356,8 +371,8 @@ void ARBaseCharacter::OnShiftReleased()
 
 float ARBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	UE_LOG(LogTemp, Warning, TEXT("DamageCauser：%s"),*DamageCauser->GetName() );
-	ChangeCurrentHp(-1*Damage);
+	UE_LOG(LogTemp, Warning, TEXT("DamageCauser：%s"), *DamageCauser->GetName());
+	ChangeCurrentHp(-1 * Damage);
 	return Damage;
 }
 
@@ -365,30 +380,32 @@ float ARBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& Damag
 
 void ARBaseCharacter::OnReceiveDamage(float BaseDamage, EDamageType Type, TSubclassOf<ABaseElement> ElementRef, int CritChance, AActor* Attacker, ABaseSkill* Spell)
 {
-	if(UStaticLibrary::BIsEnemy(Attacker)&&BaseDamage!=0)
-	ChangeCurrentHp(-1*UStaticLibrary::CaculateFinalDamage(BaseDamage, CritChance, ElementRef, this->Element)) ;
-	UE_LOG(LogTemp,Warning,TEXT("%s"),*FString::SanitizeFloat(UStaticLibrary::CaculateFinalDamage(BaseDamage, CritChance, ElementRef, this->Element)));
+	if (UStaticLibrary::BIsEnemy(Attacker) && BaseDamage != 0)
+		ChangeCurrentHp(-1 * UStaticLibrary::CaculateFinalDamage(BaseDamage, CritChance, ElementRef, this->Element));
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *FString::SanitizeFloat(UStaticLibrary::CaculateFinalDamage(BaseDamage, CritChance, ElementRef, this->Element)));
 }
 
 void ARBaseCharacter::ReadData()
 {
-  UDataTable* ChatacterInfo=Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), NULL, TEXT("DataTable'/Game/Blueprints/Character/Info/CharaterInfo.CharaterInfo'")));
-  if (ChatacterInfo == NULL) {
-	  UE_LOG(LogTemp,Error,TEXT("CharacterInfo is not found!"));
-  }
-  FCharaterInfo* Row= ChatacterInfo->FindRow<FCharaterInfo>(TEXT("S1"), TEXT("LookupCharacterInfo"));
+	UDataTable* ChatacterInfo = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), NULL, TEXT("DataTable'/Game/Blueprints/Character/Info/CharaterInfo.CharaterInfo'")));
+	if (ChatacterInfo == NULL)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CharacterInfo is not found!"));
+	}
+	FCharaterInfo* Row = ChatacterInfo->FindRow<FCharaterInfo>(TEXT("S1"), TEXT("LookupCharacterInfo"));
 
-  if (Row) {
-	  CharacterName = Row->CharacterName;
-	  TotalHp = Row->StartHP;
-	  TotalMp = Row->StartMP;
+	if (Row)
+	{
+		CharacterName = Row->CharacterName;
+		TotalHp = Row->StartHP;
+		TotalMp = Row->StartMP;
 
-	  CurrentHp = TotalHp;
-	  CurrentMp = TotalMp;
-	  ChangeCurrentHp(0);
-	  ChangeCurrentMp(0);
-	
-  }
+		CurrentHp = TotalHp;
+		CurrentMp = TotalMp;
+		ChangeCurrentHp(0);
+		ChangeCurrentMp(0);
+
+	}
 }
 
 //void ARBaseCharacter::GenerateStartingSkills()
@@ -409,19 +426,22 @@ void ARBaseCharacter::ReadData()
 
 void ARBaseCharacter::OnAnyKeyPressed(FKey Key)
 {
-	if (bCanFindKey) {
+	if (bCanFindKey)
+	{
 		bCanFindKey = false;
-		for (auto HotkeySlot: MainUserWidget->GetAllHotkeySlots()) {
-		///	UE_LOG(LogTemp, Warning, TEXT("HotkeySlot"));
-			//if (PC->IsInputKeyDown(HotkeySlot->GetKey())) {
-			////	UE_LOG(LogTemp,Warning,TEXT("HotkeySlot->GetKey"));
-			//	if (HotkeySlot->GetAssignedSpell())
-			//	{
-			//		HotkeySlot->GetAssignedSpell()->OnTryCastSpell();
-			//		break;
-			//	}
-			//}
-			if (Key==HotkeySlot->GetKey()) {
+		for (auto HotkeySlot : MainUserWidget->GetAllHotkeySlots())
+		{
+			///	UE_LOG(LogTemp, Warning, TEXT("HotkeySlot"));
+				//if (PC->IsInputKeyDown(HotkeySlot->GetKey())) {
+				////	UE_LOG(LogTemp,Warning,TEXT("HotkeySlot->GetKey"));
+				//	if (HotkeySlot->GetAssignedSpell())
+				//	{
+				//		HotkeySlot->GetAssignedSpell()->OnTryCastSpell();
+				//		break;
+				//	}
+				//}
+			if (Key == HotkeySlot->GetKey())
+			{
 				//	UE_LOG(LogTemp,Warning,TEXT("HotkeySlot->GetKey"));
 				if (HotkeySlot->GetAssignedSpell())
 				{
@@ -456,12 +476,13 @@ void ARBaseCharacter::IncreaseLevel()
 	NeededExpToNextLevel = FMath::FloorToInt((FMath::Pow((CurrentLevel - 1), 3.0) + 60) / 5 * ((CurrentLevel - 1) * 2 + 60) + 60);
 	MainUserWidget->SetLevelText(FText::AsNumber(CurrentLevel));
 
-	for (UQuestListEntry* QuestListEntry:MainUserWidget->QuestJournal->AllQuestListEntries)
+	for (UQuestListEntry* QuestListEntry : MainUserWidget->QuestJournal->AllQuestListEntries)
 	{
 		QuestListEntry->UpdateLevelColor();
 	}
 
-	if (MainUserWidget->QuestJournal->CurrentQuestListEntry) {
+	if (MainUserWidget->QuestJournal->CurrentQuestListEntry)
+	{
 		MainUserWidget->QuestJournal->UpdateSuggestedLevelColor();
 	}
 
@@ -472,9 +493,12 @@ void ARBaseCharacter::BeginSpellCast(ABaseSkill* Skill)
 {
 	bIsCasting = true;
 	CurrentSkill = Skill;
-	for (auto HotkeySlot : MainUserWidget->GetAllHotkeySlots()) {
-		if (HotkeySlot->GetAssignedSpell()) {
-			if (CurrentSkill != HotkeySlot->GetAssignedSpell()) {
+	for (auto HotkeySlot : MainUserWidget->GetAllHotkeySlots())
+	{
+		if (HotkeySlot->GetAssignedSpell())
+		{
+			if (CurrentSkill != HotkeySlot->GetAssignedSpell())
+			{
 				HotkeySlot->DisableHotkey();
 			}
 		}
@@ -485,9 +509,12 @@ void ARBaseCharacter::EndSpellCast(ABaseSkill* Skill)
 {
 	bIsCasting = false;
 	CurrentSkill = Skill;
-	for (auto HotkeySlot : MainUserWidget->GetAllHotkeySlots()) {
-		if (HotkeySlot->GetAssignedSpell()) {
-			if (CurrentSkill != HotkeySlot->GetAssignedSpell()) {
+	for (auto HotkeySlot : MainUserWidget->GetAllHotkeySlots())
+	{
+		if (HotkeySlot->GetAssignedSpell())
+		{
+			if (CurrentSkill != HotkeySlot->GetAssignedSpell())
+			{
 				HotkeySlot->EnableHotkey();
 			}
 		}
@@ -498,25 +525,25 @@ void ARBaseCharacter::EndSpellCast(ABaseSkill* Skill)
 void ARBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAxis("MoveForward",this,&ARBaseCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ARBaseCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ARBaseCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAction("Jump",IE_Pressed,this,&ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("LeftMouseButton",IE_Pressed,this,&ARBaseCharacter::OnSetDestinationPressed);
+	PlayerInputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &ARBaseCharacter::OnSetDestinationPressed);
 	PlayerInputComponent->BindAction("ZoomIn", IE_Pressed, this, &ARBaseCharacter::CameraZoomIn);
 	PlayerInputComponent->BindAction("ZoomOut", IE_Pressed, this, &ARBaseCharacter::CameraZoomOut);
 	PlayerInputComponent->BindAction("Anykey", IE_Pressed, this, &ARBaseCharacter::OnAnyKeyPressed);
 	PlayerInputComponent->BindAction("ToogleShowSkillTree", IE_Pressed, this, &ARBaseCharacter::ToogleShowSkillTree);
-	PlayerInputComponent->BindAction("Interact",IE_Pressed,this,&ARBaseCharacter::InteractToNPC);
-	PlayerInputComponent->BindAction("PlaySlideOutAnim",IE_Pressed,this,&ARBaseCharacter::PlaySlideOutAnim);
-	PlayerInputComponent->BindAction("TestCompleteQuest",IE_Pressed,this,&ARBaseCharacter::TestCompleteQuest);
-	PlayerInputComponent->BindAction("ToogleShowQuest",IE_Pressed,this,&ARBaseCharacter::ToogleShowQuest);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ARBaseCharacter::InteractToNPC);
+	PlayerInputComponent->BindAction("PlaySlideOutAnim", IE_Pressed, this, &ARBaseCharacter::PlaySlideOutAnim);
+	PlayerInputComponent->BindAction("TestCompleteQuest", IE_Pressed, this, &ARBaseCharacter::TestCompleteQuest);
+	PlayerInputComponent->BindAction("ToogleShowQuest", IE_Pressed, this, &ARBaseCharacter::ToogleShowQuest);
 	PlayerInputComponent->BindAction("TestFailQuest", IE_Pressed, this, &ARBaseCharacter::TestFailQuest);
-	PlayerInputComponent->BindAction("ToogleShowInventory",IE_Pressed,this,&ARBaseCharacter::ToogleShowInventory);
+	PlayerInputComponent->BindAction("ToogleShowInventory", IE_Pressed, this, &ARBaseCharacter::ToogleShowInventory);
 	PlayerInputComponent->BindAction("Shift", IE_Pressed, this, &ARBaseCharacter::OnShiftPressed);
-	PlayerInputComponent->BindAction("Shift",IE_Released,this,&ARBaseCharacter::OnShiftReleased);
+	PlayerInputComponent->BindAction("Shift", IE_Released, this, &ARBaseCharacter::OnShiftReleased);
 }
 
 void ARBaseCharacter::ChangeCurrentHp(float DeltaHp)
@@ -536,7 +563,8 @@ void ARBaseCharacter::ChangeCurrentMp(float DeltaMp)
 void ARBaseCharacter::IncreaseCurrentExp(float DeltaExp)
 {
 	CurrentExp += DeltaExp;
-	if (CurrentExp >= NeededExpToNextLevel) {
+	if (CurrentExp >= NeededExpToNextLevel)
+	{
 		IncreaseLevel();
 		CurrentExp -= NeededExpToNextLevel;
 	}
@@ -545,34 +573,39 @@ void ARBaseCharacter::IncreaseCurrentExp(float DeltaExp)
 
 UBuffWidget* ARBaseCharacter::AddBuff(ABuffSkill* SkillBuff)
 {
-	if (Buffs.Contains(SkillBuff)) {
+	if (Buffs.Contains(SkillBuff))
+	{
 		return nullptr;
 	}
-	else {
+	else
+	{
 		Buffs.Add(SkillBuff);
-		 BuffWidget= CreateWidget<UBuffWidget>(GetWorld(),LoadClass<UBuffWidget>(GetWorld(),TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/WBP_Buff.WBP_Buff_C'")));
-		 BuffWidget->BuffTexture = SkillBuff->BuffIcon;
-		 MainUserWidget->BuffBox->AddChildToHorizontalBox(BuffWidget);
-		 return BuffWidget;
+		BuffWidget = CreateWidget<UBuffWidget>(GetWorld(), LoadClass<UBuffWidget>(GetWorld(), TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/WBP_Buff.WBP_Buff_C'")));
+		BuffWidget->BuffTexture = SkillBuff->BuffIcon;
+		MainUserWidget->BuffBox->AddChildToHorizontalBox(BuffWidget);
+		return BuffWidget;
 	}
 }
 
 void ARBaseCharacter::RemoveBuff(ABuffSkill* SkillBuff)
 {
-	if (!Buffs.Contains(SkillBuff)) {
+	if (!Buffs.Contains(SkillBuff))
+	{
 		return;
 	}
-	else {
+	else
+	{
 		Buffs.Remove(SkillBuff);
 		BuffWidget->RemoveFromParent();
 	}
 }
 
-void ARBaseCharacter::OnInteractionCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void ARBaseCharacter::OnInteractionCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp,Warning,TEXT("InteractionBeginOverlap"));
-	IInterationInterface* InteractionInterface= Cast<IInterationInterface>(OtherActor);
-	if (InteractionInterface) {
+	UE_LOG(LogTemp, Warning, TEXT("InteractionBeginOverlap"));
+	IInterationInterface* InteractionInterface = Cast<IInterationInterface>(OtherActor);
+	if (InteractionInterface)
+	{
 		UE_LOG(LogTemp, Warning, TEXT("Interface"));
 		InteractionInterface->OnEnterPlayerRadius(this);
 	}
@@ -582,33 +615,39 @@ void ARBaseCharacter::OnIteractionCompEndOverlap(UPrimitiveComponent* Overlapped
 {
 	UE_LOG(LogTemp, Warning, TEXT("InteractionEndOverlap"));
 	IInterationInterface* InteractionInterface = Cast<IInterationInterface>(OtherActor);
-	if (InteractionInterface) {
+	if (InteractionInterface)
+	{
 		InteractionInterface->OnLeavePlayerRadius(this);
 	}
 }
 
 bool ARBaseCharacter::EquipItem(class AItemStaff* ItemStaff)
 {
-	if (!Staff) {
+	if (!Staff)
+	{
 		if (InventoryRef->RemoveItemAtIndex(ItemStaff->Index, 1))
 		{
 			Staff = ItemStaff;
 			//if (Staff->GetName().Contains("Hammer"))
-				Staff->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
+			Staff->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
 			//else {
 			//	Staff->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "StaffSocket");
 			//}
 			return true;
 		}
-		else {
+		else
+		{
 			return false;
 		}
 	}
-	else {
-		if (UnEquipItem()) {
+	else
+	{
+		if (UnEquipItem())
+		{
 			return EquipItem(ItemStaff);
 		}
-		else {
+		else
+		{
 			return false;
 		}
 	}
@@ -616,17 +655,21 @@ bool ARBaseCharacter::EquipItem(class AItemStaff* ItemStaff)
 
 bool ARBaseCharacter::UnEquipItem()
 {
-	if (Staff) {
-		if (InventoryRef->AddItem(Staff->GetClass(), 1)==0) {
+	if (Staff)
+	{
+		if (InventoryRef->AddItem(Staff->GetClass(), 1) == 0)
+		{
 			Staff->Destroy();
 			Staff = nullptr;
 			return true;
 		}
-		else {
+		else
+		{
 			return false;
 		}
 	}
-	else {
+	else
+	{
 		return false;
 	}
 }
@@ -643,33 +686,34 @@ void ARBaseCharacter::OnOverloadEnd()
 	OverloadParticleComp->Deactivate();
 }
 
-void ARBaseCharacter::Test(TArray<int> &IntTest)
+void ARBaseCharacter::Test(TArray<int>& IntTest)
 {
 	IntTest.Add(1);
 }
 
 void ARBaseCharacter::IncreaseCoin(int Amount)
 {
-	if (Amount > 0) {
+	if (Amount > 0)
+	{
 		CurrentCoin += Amount;
 		MainUserWidget->InventoryWidget->UpdateCoinText(CurrentCoin);
-		if(MainUserWidget->ShopWidget)
-		MainUserWidget->ShopWidget->UpdateCoin();
+		if (MainUserWidget->ShopWidget)
+			MainUserWidget->ShopWidget->UpdateCoin();
 	}
 }
 
 void ARBaseCharacter::DecreaseCoin(int Amount)
 {
-		CurrentCoin = FMath::Clamp(CurrentCoin - Amount, 0,CurrentCoin);
-		MainUserWidget->InventoryWidget->UpdateCoinText(CurrentCoin);
-		if (MainUserWidget->ShopWidget)
+	CurrentCoin = FMath::Clamp(CurrentCoin - Amount, 0, CurrentCoin);
+	MainUserWidget->InventoryWidget->UpdateCoinText(CurrentCoin);
+	if (MainUserWidget->ShopWidget)
 		MainUserWidget->ShopWidget->UpdateCoin();
 }
 
 void ARBaseCharacter::SaveGame()
 {
-	if(!RPGSaveInstance)
-	RPGSaveInstance=Cast<URPGSave>(UGameplayStatics::CreateSaveGameObject(URPGSave::StaticClass()));
+	if (!RPGSaveInstance)
+		RPGSaveInstance = Cast<URPGSave>(UGameplayStatics::CreateSaveGameObject(URPGSave::StaticClass()));
 	RPGSaveInstance->SavedName = CharacterName;
 	RPGSaveInstance->SavedHP = CurrentHp;
 	RPGSaveInstance->SavedMP = CurrentMp;
@@ -681,8 +725,8 @@ void ARBaseCharacter::SaveGame()
 
 void ARBaseCharacter::LoadGame()
 {
-	if(!RPGSaveInstance)
-	RPGSaveInstance = Cast<URPGSave>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
+	if (!RPGSaveInstance)
+		RPGSaveInstance = Cast<URPGSave>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
 	UE_LOG(LogTemp, Warning, TEXT("LoadHP:%s"), *FString::SanitizeFloat(RPGSaveInstance->SavedHP));
 	CharacterName = RPGSaveInstance->SavedName;
 	CurrentHp = RPGSaveInstance->SavedHP;

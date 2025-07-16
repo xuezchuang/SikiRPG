@@ -30,18 +30,21 @@ void ANormalEnemyController::OnPossess(APawn* InPawn)
 
 int ANormalEnemyController::GetNextAnimationIndex()
 {
-	if (CurrentAttackIndex + 1 >= EnemyPawn->AttackAnimaions.Num()) {
+	if (CurrentAttackIndex + 1 >= EnemyPawn->AttackAnimaions.Num())
+	{
 		return 0;
 	}
-	else {
+	else
+	{
 		return (CurrentAttackIndex + 1);
 	}
 }
 
 bool ANormalEnemyController::BInAttackRange()
 {
-	if (TargetActor) {
-		
+	if (TargetActor)
+	{
+
 		return(EnemyPawn->GetDistanceTo(TargetActor) <= AttackRange);
 	}
 	else
@@ -53,41 +56,47 @@ bool ANormalEnemyController::BInAttackRange()
 void ANormalEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
 
-	if (bIsRunningBack) {
+	if (bIsRunningBack)
+	{
 
 		bIsRunningBack = false;
 		bIsPatrolling = true;
 		EnemyPawn->GetCharacterMovement()->MaxWalkSpeed = PatrolWalkSpeed;
 	}
 
-	if (BInAttackRange()) {
+	if (BInAttackRange())
+	{
 		PerformAttack();
 		return;
 	}
 
-	if (bIsPatrolling) {
+	if (bIsPatrolling)
+	{
 		float ThinkTime = FMath::RandRange(1, 4);
-		GetWorldTimerManager().SetTimer(TimerHandle_Patrol,this,&ANormalEnemyController::DetectedPatrol,ThinkTime,false);
+		GetWorldTimerManager().SetTimer(TimerHandle_Patrol, this, &ANormalEnemyController::DetectedPatrol, ThinkTime, false);
 	}
 }
 
 void ANormalEnemyController::DetectedPatrol()
 {
-	if (bIsPatrolling) {
+	if (bIsPatrolling)
+	{
 		Patrol();
 	}
 }
 
 void ANormalEnemyController::PerformAttack()
 {
-	if (!EnemyPawn->GetBDead() && !bIsRunningBack&&bWasAggroed) {
+	if (!EnemyPawn->GetBDead() && !bIsRunningBack && bWasAggroed)
+	{
 
 		bIsPatrolling = false;
 
 		EnemyPawn->GetCharacterMovement()->StopMovementImmediately();
 
-		if (TargetActor) {
-			FRotator Rotation=UKismetMathLibrary::FindLookAtRotation(EnemyPawn->GetActorLocation(),TargetActor->GetActorLocation());
+		if (TargetActor)
+		{
+			FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(EnemyPawn->GetActorLocation(), TargetActor->GetActorLocation());
 			EnemyPawn->SetActorRotation(Rotation);
 		}
 
@@ -95,7 +104,7 @@ void ANormalEnemyController::PerformAttack()
 
 		AnimInstance->Montage_Play(CurrentAttackMontage);
 
-		GetWorldTimerManager().SetTimer(TimerHandle_AnimPlayOver,this,&ANormalEnemyController::OnAnimPlayOver,CurrentAttackMontage->GetPlayLength(),false);
+		GetWorldTimerManager().SetTimer(TimerHandle_AnimPlayOver, this, &ANormalEnemyController::OnAnimPlayOver, CurrentAttackMontage->GetPlayLength(), false);
 	}
 }
 
@@ -104,29 +113,34 @@ void ANormalEnemyController::OnAnimPlayOver()
 	CurrentAttackMontage = nullptr;
 	CurrentAttackIndex = GetNextAnimationIndex();
 
-	if (BInAttackRange()) {
+	if (BInAttackRange())
+	{
 		PerformAttack();
 	}
-	else {
+	else
+	{
 		MoveToActor(TargetActor);
 	}
 }
 
 void ANormalEnemyController::OnAggroedPulled(AActor* Target)
 {
-	if (!bWasAggroed && !bIsRunningBack) {
+	if (!bWasAggroed && !bIsRunningBack)
+	{
 		bWasAggroed = true;
 		TargetActor = Target;
 		bIsPatrolling = false;
 
 		EnemyPawn->GetCharacterMovement()->MaxWalkSpeed = AggroedWalkSpeed;
 
-		GetWorldTimerManager().SetTimer(TimerHnadle_CalDis,this,&ANormalEnemyController::CacualteTargetDistance,1.0f,true);
+		GetWorldTimerManager().SetTimer(TimerHnadle_CalDis, this, &ANormalEnemyController::CacualteTargetDistance, 1.0f, true);
 
-		if (BInAttackRange()) {
+		if (BInAttackRange())
+		{
 			PerformAttack();
 		}
-		else {
+		else
+		{
 			MoveToActor(TargetActor);
 		}
 	}
@@ -134,10 +148,11 @@ void ANormalEnemyController::OnAggroedPulled(AActor* Target)
 
 void ANormalEnemyController::CacualteTargetDistance()
 {
-	if(TargetActor)
-	if (FVector::Dist(EnemyPawn->GetActorLocation(), TargetActor->GetActorLocation())>MaxDistanceToFollowTarget) {
-		OnReset();
-	}
+	if (TargetActor)
+		if (FVector::Dist(EnemyPawn->GetActorLocation(), TargetActor->GetActorLocation()) > MaxDistanceToFollowTarget)
+		{
+			OnReset();
+		}
 }
 
 void ANormalEnemyController::OnReset()
@@ -158,10 +173,12 @@ void ANormalEnemyController::OnReset()
 void ANormalEnemyController::Patrol()
 {
 	const float SearchRadius = 1000.0f;
-	if (NavSys) {
+	if (NavSys)
+	{
 		FNavLocation RandomPt;
-		bool bFound=NavSys->GetRandomReachablePointInRadius(EnemyPawn->GetActorLocation(), SearchRadius, RandomPt);
-		if (bFound) {
+		bool bFound = NavSys->GetRandomReachablePointInRadius(EnemyPawn->GetActorLocation(), SearchRadius, RandomPt);
+		if (bFound)
+		{
 			MoveToLocation(RandomPt.Location);
 		}
 	}

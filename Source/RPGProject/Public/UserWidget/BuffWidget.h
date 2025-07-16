@@ -7,7 +7,7 @@
 #include "BuffWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class RPGPROJECT_API UBuffWidget : public UUserWidget
@@ -15,18 +15,18 @@ class RPGPROJECT_API UBuffWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-		UPROPERTY(Meta=(BindWidget))
-		class UImage* BuffIcon;
 	UPROPERTY(Meta = (BindWidget))
-		class UImage* CooldownImage;
+	class UImage* BuffIcon;
 	UPROPERTY(Meta = (BindWidget))
-		class UTextBlock* CooldownTime;
+	class UImage* CooldownImage;
+	UPROPERTY(Meta = (BindWidget))
+	class UTextBlock* CooldownTime;
 
 	class UTexture2D* BuffTexture;
 
 	class UMaterialInstanceDynamic* CooldownMat;
 
 	virtual void NativeConstruct() override;
-	
-	
+
+
 };

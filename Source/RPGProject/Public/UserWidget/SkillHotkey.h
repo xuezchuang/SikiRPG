@@ -11,7 +11,7 @@ class UTextBlock;
 class UImage;
 class ABaseSkill;
 /**
- * 
+ *
  */
 UCLASS()
 class RPGPROJECT_API USkillHotkey : public UUserWidget
@@ -23,19 +23,19 @@ class RPGPROJECT_API USkillHotkey : public UUserWidget
 
 public:
 	UPROPERTY(Meta = (BindWidget))
-		UTextBlock* HotkeyName;
+	UTextBlock* HotkeyName;
 	UPROPERTY(Meta = (BindWidget))
-		UTextBlock* CooldownText;
+	UTextBlock* CooldownText;
 
 	UPROPERTY(Meta = (BindWidget))
-		UImage* SkillIcon;
+	UImage* SkillIcon;
 	UPROPERTY(Meta = (BindWidget))
-		UImage* CooldownImage;
+	UImage* CooldownImage;
 	UPROPERTY(Meta = (BindWidget))
 	UImage* Base;
 
 	UPROPERTY(Meta = (BindWidget))
-		class UButton* SkillButton;
+	class UButton* SkillButton;
 
 	bool bDraggedOver;//标识当前是否正在被拖拽
 	FLinearColor DragOverColor;//这个插槽为空的时候，有图标过来，显示的颜色
@@ -43,7 +43,7 @@ public:
 
 	class UMaterialInstanceDynamic* CooldownMat;
 
-	UPROPERTY(EditAnywhere,Category=DragDrop)
+	UPROPERTY(EditAnywhere, Category = DragDrop)
 	TSubclassOf<UDragDropOperation> SkillDragOperation;
 
 

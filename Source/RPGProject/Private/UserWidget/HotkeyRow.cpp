@@ -6,8 +6,9 @@
 
 TArray<USkillHotkey*> UHotkeyRow::GenerateHotkeys()
 {
-	for (auto Key : Keys) {
-		USkillHotkey* SkillHotkey=CreateWidget<USkillHotkey>(GetWorld(), LoadClass<USkillHotkey>(GetWorld(), TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/WBP_SkillHotkey.WBP_SkillHotkey_C'"))) ;
+	for (auto Key : Keys)
+	{
+		USkillHotkey* SkillHotkey = CreateWidget<USkillHotkey>(GetWorld(), LoadClass<USkillHotkey>(GetWorld(), TEXT("WidgetBlueprint'/Game/Blueprints/UserWidget/WBP_SkillHotkey.WBP_SkillHotkey_C'")));
 		SkillHotkey->SetKey(Key);
 		SlotWidgets.Add(SkillHotkey);
 		RowBox->AddChildToHorizontalBox(SkillHotkey);
